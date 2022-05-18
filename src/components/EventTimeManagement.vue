@@ -5,17 +5,11 @@
         <label for="admins_event_form_event_room_open_times" class="label"
           >イベント開催日</label
         >
-        <br />
-        {{ _eventStartTimeUnix }}
-        <br />
-        {{ _distractMinutesUnix }}
         <datepicker
-          :name="nameAttribute"
+          :name="`${nameAttribute}[event_day]`"
           :class="{ 'w-one-quarter': datepickerStyleClass }"
-          hour-label="時"
-          minute-label="分"
           :input-class="'input is-info '"
-          :format="'yyyy年MM月dd日'"
+          :format="'yyyy-MM-dd'"
           v-model="eventDay"
         ></datepicker>
       </div>
@@ -27,10 +21,10 @@
           >ルームオープン時刻</label
         >
         <vue-timepicker
+          :name="`${nameAttribute}[room_open_time]`"
           placeholder="例）13:00"
           input-class="input is-info"
           hour-label="時"
-          :hour-range="Array.from(Array(14).keys(), (x) => x + 8)"
           minute-label="分"
           minute-interval="5"
           format="kk:mm"
@@ -45,15 +39,16 @@
           >クライアント開始時刻</label
         >
         <vue-timepicker
+          :name="`${nameAttribute}[client_start_time]`"
           placeholder="例）13:00"
           input-class="input is-info"
           hour-label="時"
-          :hour-range="Array.from(Array(14).keys(), (x) => x + 8)"
+          :hour-range="clientStartHours"
           minute-label="分"
           minute-interval="5"
           format="kk:mm"
           v-model="clientStartTime"
-          hide-disabled-hours
+          :hide-disabled-hours="true"
         ></vue-timepicker>
       </div>
 
@@ -62,6 +57,7 @@
           >イベント開始時刻</label
         >
         <vue-timepicker
+          :name="`${nameAttribute}[event_start_time]`"
           input-class="input is-info"
           format="kk:mm"
           hour-label="時"
@@ -79,6 +75,7 @@
           >イベント終了時刻</label
         >
         <vue-timepicker
+          :name="`${nameAttribute}[event_end_time]`"
           input-class="input is-info"
           format="kk:mm"
           placeholder="例）13:00"
@@ -96,6 +93,7 @@
           >クライアント終了時刻（懇親会など含む）</label
         >
         <vue-timepicker
+          :name="`${nameAttribute}[client_end_time]`"
           input-class="input is-info"
           format="kk:mm"
           placeholder="例）13:00"
@@ -128,7 +126,7 @@ export default {
     },
     nameAttribute: {
       type: String,
-      default: "admins_event_form[event_room_open_time]",
+      default: "admins_event_form",
     },
     initialEventDay: {
       type: String,
@@ -189,6 +187,11 @@ export default {
     },
   },
   computed: {
+    clientStartHours() {
+      const d = new Date(`${this.eventDay} ${this.eventStartTime}`).getHours();
+      console.log(d - 14);
+      return Array.from(Array(14).keys(), (x) => x + (d - 14)).slice(4);
+    },
     openRoomTime() {
       const _this = this;
       const unixOpenRoomTime =
@@ -231,6 +234,9 @@ input.display-time {
   height: 2.6em;
   padding: 1.2em 0.5em !important;
   font-size: 1em;
+  &.disabled {
+    color: #000 !important;
+  }
 }
 .w-one-quarter {
   width: 20%;
