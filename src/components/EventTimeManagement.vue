@@ -177,39 +177,30 @@ export default {
     //基本はCの30分前、BがCの20分以上前になる場合はBの10分前に設定される)
     openRoomTime() {
       const _this = this;
-      if (_this._clientStartTimeUnix === 0) return;
-      console.log(`e : ${_this._eventStartTimeUnix}`);
-      console.log(`c : ${_this._clientStartTimeUnix}`);
       const unixOpenRoomTime =
         _this._eventStartTimeUnix - _this._distractMinutesUnix;
-      console.log(unixOpenRoomTime);
       const date = new Date(unixOpenRoomTime);
       const [h, m] = [date.getHours(), date.getMinutes()];
-      console.log(`aa: ${h}:${m}`);
       return `${h}:${m}`;
     },
     _distractMinutesUnix() {
       const _this = this;
       if (!_this.clientStartTime) return 1800000;
-      console.log(
-        `client: ${_this.eventDay} ${_this.clientStartTime.kk}:${_this.clientStartTime.mm}`
-      );
       const distractMinutes =
-        _this._eventStartTimeUnix - _this.clientStartTimeUnix;
+        _this._eventStartTimeUnix - _this._clientStartTimeUnix;
       return distractMinutes >= 1200000 ? 600000 : 1800000;
     },
     _eventStartTimeUnix() {
       const _this = this;
       if (!_this.eventStartTime) return 0;
-      const d = new Date(
-        // `${_this.eventDay} ${_this.eventStartTime.kk}:${_this.eventStartTime.mm}`
-        `${_this.eventDay} ${_this.eventStartTime}`
-      );
+      const d = new Date(`${_this.eventDay} ${_this.eventStartTime}`);
       return d.getTime();
     },
     _clientStartTimeUnix() {
       const _this = this;
       if (!_this.clientStartTime) return 0;
+      if (!_this.clientStartTime["kk"]) return 0;
+      if (!_this.clientStartTime["mm"]) return 0;
       const d = new Date(
         `${_this.eventDay} ${_this.clientStartTime.kk}:${_this.clientStartTime.mm}`
       );
