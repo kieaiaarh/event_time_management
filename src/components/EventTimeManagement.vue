@@ -91,7 +91,7 @@
         ></vue-timepicker>
       </div>
 
-      <div v-if="useZoomAfter" class="control">
+      <div class="control">
         <label for="admins_event_form_client_end_time" class="label"
           >クライアント終了時刻（懇親会など含む）</label
         >
@@ -158,13 +158,9 @@ export default {
       required: false,
       default: "19:30",
     },
-    useZoomAfter: {
-      type: Boolean,
-      default: true,
-    },
     timeUsingZoom: {
       type: Number,
-      default: 30,
+      default: 0,
     },
   },
   data() {
@@ -193,7 +189,6 @@ export default {
     },
   },
   computed: {
-    //基本はCの30分前、BがCの20分以上前になる場合はBの10分前に設定される)
     openRoomTime() {
       const _this = this;
       const unixOpenRoomTime =
