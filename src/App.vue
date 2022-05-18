@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <img width="25%" src="./assets/logo.png" />
+    <!-- <img width="25%" src="./assets/logo.png" /> -->
     　<EventTimeManagement msg="Hello Composition API in CodeSandbox!" />
   </div>
 </template>
