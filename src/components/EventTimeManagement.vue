@@ -105,7 +105,7 @@
           minute-interval="5"
           hide-disabled-hours
           v-model="clientEndTime"
-          :disabled="!useZoomAfter"
+          :disabled="timeUsingZoom != ''"
         ></vue-timepicker>
       </div>
     </div>
@@ -162,16 +162,35 @@ export default {
       type: Boolean,
       default: true,
     },
+    timeUsingZoom: {
+      type: Number,
+      default: 30,
+    },
   },
   data() {
     return {
       eventDay: this.initialEventDay,
       roomOpenTime: this.initialRoomOpenTime,
       clientStartTime: this.initialClientStartTime,
-      clientEndTime: this.initialClientEndTime,
+      clientEndTime: "",
       eventStartTime: this.initialEventStartTime,
       eventEndTime: this.initialEventEndTime,
     };
+  },
+  created() {
+    if (this.timeUsingZoom > 0) {
+      const timeUsingZoomUnix = this.timeUsingZoom * (1000 * 60);
+      const d = new Date(`${this.eventDay} ${this.eventEndTime}`);
+      const e = d.getTime() + timeUsingZoomUnix;
+      const t = new Date(e);
+      const [h, m] = [t.getHours(), t.getMinutes()];
+      this.clientEndTime = `${this.zeroPadding(h)}:${this.zeroPadding(m)}`;
+    }
+  },
+  methods: {
+    zeroPadding(t) {
+      return t.toString().padStart(2, "0");
+    },
   },
   computed: {
     //基本はCの30分前、BがCの20分以上前になる場合はBの10分前に設定される)
@@ -181,7 +200,7 @@ export default {
         _this._eventStartTimeUnix - _this._distractMinutesUnix;
       const date = new Date(unixOpenRoomTime);
       const [h, m] = [date.getHours(), date.getMinutes()];
-      return `${h}:${m}`;
+      return `${this.zeroPadding(h)}:${this.zeroPadding(m)}`;
     },
     _distractMinutesUnix() {
       const _this = this;
